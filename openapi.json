@@ -3,9 +3,6 @@
   "info": {
     "title": "Bank System Documentation - OpenAPI 3.0",
     "description": "Dokumentasi API Bank System",
-    "contact": {
-      "email": "apiteam@swagger.io"
-    },
     "version": "1.0.11"
   },
   "servers": [
