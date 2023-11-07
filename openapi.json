@@ -16,15 +16,15 @@
   "tags": [
     {
       "name": "Auth",
-      "description": "Everything about your Articles"
+      "description": "For Authentication"
     },
     {
       "name": "Users",
-      "description": "Access to comments"
+      "description": "For Users"
     },
     {
       "name": "Bank_accounts",
-      "description": "Operations about user"
+      "description": "For Bank Accounts"
     }
   ],
   "paths": {
@@ -33,8 +33,8 @@
         "tags": [
           "Auth"
         ],
-        "summary": "Register a new user",
-        "description": "Endpoint to register a new user.",
+        "summary": "User Register",
+        "description": "For register a new user.",
         "requestBody": {
           "required": true,
           "content": {
@@ -90,7 +90,7 @@
           "Auth"
         ],
         "summary": "User login",
-        "description": "Endpoint for user login.",
+        "description": "For user login.",
         "requestBody": {
           "required": true,
           "content": {
@@ -143,11 +143,11 @@
         "tags": [
           "Users"
         ],
-        "summary": "Get bank accounts",
-        "description": "Endpoint to get user bank accounts.",
+        "summary": "Get data users",
+        "description": "Endpoint to get data user",
         "responses": {
           "200": {
-            "description": "Bank accounts retrieved successfully",
+            "description": "Data users retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -179,8 +179,8 @@
         "tags": [
           "Users"
         ],
-        "summary": "User login",
-        "description": "Endpoint for user login.",
+        "summary": "User create",
+        "description": "For create user",
         "requestBody": {
           "required": true,
           "content": {
@@ -213,7 +213,7 @@
         },
         "responses": {
           "200": {
-            "description": "User logged in successfully",
+            "description": "Create users successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -244,8 +244,8 @@
         "tags": [
           "Users"
         ],
-        "summary": "Get bank account by ID",
-        "description": "Endpoint to get a bank account by its ID.",
+        "summary": "Get data users by ID",
+        "description": "Endpoint to get a data users by its ID.",
         "parameters": [
           {
             "name": "id",
@@ -254,12 +254,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "ID of the bank account to retrieve."
+            "description": "ID of the data users to retrieve."
           }
         ],
         "responses": {
           "200": {
-            "description": "Bank account retrieved successfully",
+            "description": "Data users retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -327,8 +327,8 @@
         "tags": [
           "Bank_accounts"
         ],
-        "summary": "User login",
-        "description": "Endpoint for user login.",
+        "summary": "Create bank account",
+        "description": "Endpoint for create bank account",
         "requestBody": {
           "required": true,
           "content": {
@@ -355,7 +355,7 @@
         },
         "responses": {
           "200": {
-            "description": "User logged in successfully",
+            "description": "Create bank account successfully",
             "content": {
               "application/json": {
                 "schema": {
