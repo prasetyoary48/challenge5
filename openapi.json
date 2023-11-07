@@ -10,65 +10,164 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000/api"
     }
   ],
   "tags": [
     {
-      "name": "articles",
+      "name": "Auth",
       "description": "Everything about your Articles"
     },
     {
-      "name": "comments",
+      "name": "Users",
       "description": "Access to comments"
     },
     {
-      "name": "users",
+      "name": "Bank_accounts",
       "description": "Operations about user"
     }
   ],
   "paths": {
-    "/articles": {
-      "get": {
+    "/register": {
+      "post": {
         "tags": [
-          "articles"
+          "Auth"
         ],
-        "summary": "Get Article lists",
-        "description": "Get Article Lists",
-        "operationId": "getArticles",
-        "parameters": [
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Pagination page",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "number",
-              "default": 1
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Pagination limit",
-            "required": false,
-            "explode": true,
-            "schema": {
-              "type": "number",
-              "default": 10
+        "summary": "Register a new user",
+        "description": "Endpoint to register a new user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
-          "200": {
-            "description": "Successful operation",
+          "201": {
+            "description": "User registered successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Article"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "User login",
+        "description": "Endpoint for user login.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "/api/v2/users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get bank accounts",
+        "description": "Endpoint to get user bank accounts.",
+        "responses": {
+          "200": {
+            "description": "Bank accounts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
                   }
                 }
               }
@@ -78,98 +177,249 @@
       },
       "post": {
         "tags": [
-          "articles"
+          "Users"
         ],
-        "summary": "Add a new article to the blog",
-        "description": "Add a new article to the blog",
-        "operationId": "addArticle",
+        "summary": "User login",
+        "description": "Endpoint for user login.",
         "requestBody": {
-          "description": "Create a new article in the blog",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Article"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Article"
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "identity_number": {
+                    "type": "integer"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "identity_type": {
+                    "type": "string"
+                  }
                 }
               }
             }
-          },
-          "405": {
-            "description": "Invalid input"
           }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Article": {
-        "required": [
-          "title",
-          "content"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64",
-            "example": 10
-          },
-          "title": {
-            "type": "string",
-            "example": "Hello World"
-          },
-          "thumbnails": {
-            "type": "string",
-            "example": "https://example.com/uploads/hello.jpg"
-          },
-          "summary": {
-            "type": "string",
-            "example": "Hello World"
-          },
-          "content": {
-            "type": "string",
-            "description": "contents",
-            "example": "Lorem ipsum hello world"
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "requestBodies": {
-      "Article": {
-        "description": "Pet object that needs to be added to the store",
-        "content": {
-          "application/json": {
+    "/api/v2/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get bank account by ID",
+        "description": "Endpoint to get a bank account by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string",
-                  "example": "Hello World"
-                },
-                "thumbnails": {
-                  "type": "string",
-                  "example": "https://example.com/uploads/hello.jpg"
-                },
-                "summary": {
-                  "type": "string",
-                  "example": "Hello World"
-                },
-                "content": {
-                  "type": "string",
-                  "description": "contents",
-                  "example": "Lorem ipsum hello world"
+              "type": "string"
+            },
+            "description": "ID of the bank account to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bank account retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+   
+    "/v2/bank_accounts": {
+      "get": {
+        "tags": [
+          "Bank_accounts"
+        ],
+        "summary": "Get bank accounts",
+        "description": "Endpoint to get user bank accounts.",
+        "responses": {
+          "200": {
+            "description": "Bank accounts retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bank_accounts"
+        ],
+        "summary": "User login",
+        "description": "Endpoint for user login.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bank_name": {
+                    "type": "string"
+                  },
+                  "account_number": {
+                    "type": "integer"
+                  },
+                  "balance": {
+                    "type": "number"
+                  },
+                  "userId": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User logged in successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/bank_accounts/{id}": {
+      "get": {
+        "tags": [
+          "Bank_accounts"
+        ],
+        "summary": "Get bank account by ID",
+        "description": "Endpoint to get a bank account by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the bank account to retrieve."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bank account retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object"
+                    }
+                  }
                 }
               }
             }
@@ -178,4 +428,6 @@
       }
     }
   }
+  
+  
 }

@@ -15,7 +15,6 @@ module.exports = {
     },
 
     async getById(req, res){
-        
         const transaction = await prisma.transaction.findUnique(
             {where:
                 {
@@ -39,8 +38,6 @@ module.exports = {
     },
 
     async create(req, res){
-        
-
         try {
             const acc1 = await prisma.bankAccount.findUnique({
                 where: {
@@ -88,10 +85,10 @@ module.exports = {
                     // console.log(updatedData1)
                 }
             } 
-            return res.status(201).json({ 
+            return res.status(200).json({ 
                 status: 'success', 
                 code: 200, 
-                message: 'Data diupdate!',
+                message: 'Data ditambah!',
                 
             })
         } catch (error) {
@@ -103,23 +100,6 @@ module.exports = {
         }
 
         
-    },
-
-    async update(req, res){
-        const updatedData = await prisma.user.update({
-            where: {
-                id: +req.params.id,
-            },
-            data: req.body
-        });
-        
-
-        res.status(201).json({ 
-            status: 'success', 
-            code: 200, 
-            message: 'Data diupdate!',
-            data: updatedData
-        })
     },
 
     async destroy(req, res){

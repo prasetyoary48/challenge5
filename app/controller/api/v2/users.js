@@ -37,8 +37,7 @@ module.exports = {
             code: 200, 
             message: 'Data berhasil ditampilkan!',
             data: user
-        })
-        
+        })  
     },
 
     async create(req, res){
@@ -98,6 +97,7 @@ module.exports = {
     },
 
     async destroy(req, res){
+        
         const deletedData = await prisma.user.delete({
             where: {
                 id: +req.params.id,

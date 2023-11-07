@@ -16,10 +16,10 @@ const controller = require('../app/controller')
 // router.put('/bank_accounts/:id',controller.bank_accounts.update);
 // router.delete('/bank_accounts/:id',controller.bank_accounts.destroy);
 
-router.get('/v1/bank_accounts', controller.bank_accountsV2.get);
-router.get('/v1/bank_accounts/:id', controller.bank_accountsV2.getById);
-router.post('/v1/bank_accounts', controller.bank_accountsV2.create);
-router.put('/v1/bank_accounts/:id',controller.bank_accountsV2.update);
-router.delete('/v1/bank_accounts/:id',controller.bank_accountsV2.destroy);
+router.get('/v2/bank_accounts', controller.bank_accountsV2.get);
+router.get('/v2/bank_accounts/:id', controller.bank_accountsV2.getById);
+router.post('/v2/bank_accounts', controller.bank_accountsV2.create);
+router.put('/v2/bank_accounts/:id',controller.bank_accountsV2.update);
+router.delete('/v2/bank_accounts/:id',controller.bank_accountsV2.destroy);
 
 module.exports = router;
