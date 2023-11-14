@@ -1,7 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
-
 const prisma = new PrismaClient
-
 
 module.exports = {
     async get(req, res){
@@ -34,7 +32,6 @@ module.exports = {
             message: 'Data berhasil ditampilkan!',
             data: transaction
         })
-        
     },
 
     async create(req, res){
@@ -82,7 +79,6 @@ module.exports = {
                             userId:+acc2.userId
                         }
                     });
-                    // console.log(updatedData1)
                 }
             } 
             return res.status(200).json({ 
@@ -98,8 +94,6 @@ module.exports = {
                 message: 'Gagal transaksi',
             })
         }
-
-        
     },
 
     async destroy(req, res){

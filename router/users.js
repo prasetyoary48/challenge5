@@ -3,6 +3,7 @@ const router = express.Router();
 // const { get, getById, create, update, destroy } = require('../app/controller/users')
 
 const controller = require('../app/controller')
+const { auth } = require('../utils/jwt');
 
 // router.get('/users', get);
 // router.get('/users/:id', getById);
@@ -18,7 +19,7 @@ const controller = require('../app/controller')
 
 router.get('/api/v2/users', controller.usersV2.get);
 router.get('/api/v2/users/:id', controller.usersV2.getById);
-router.post('/api/v2/users', controller.usersV2.create);
+router.post('/api/v2/users', auth, controller.usersV2.create);
 router.put('/api/v2/users/:id',controller.usersV2.update);
 router.delete('/api/v2/users/:id',controller.usersV2.destroy);
 

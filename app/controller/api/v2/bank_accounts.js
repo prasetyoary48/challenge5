@@ -5,7 +5,6 @@ const prisma = new PrismaClient
 
 module.exports = {
     async get(req, res){
-        console.log('mantap')
         const bankAccount = await prisma.bankAccount.findMany();
         res.status(200).json({ 
             status: 'success', 
@@ -27,7 +26,6 @@ module.exports = {
             message: 'Data berhasil ditampilkan!',
             data: bankAccount
         })
-        
     },
 
     async create(req, res){
@@ -77,11 +75,6 @@ module.exports = {
                 }
             }
         }
-        
-        
-
-        console.log(user)
-
         res.status(201).json({ 
             status: 'success', 
             code: 200, 
@@ -113,7 +106,6 @@ module.exports = {
                 id: +req.params.id,
             },
         });
-    
         res.status(200).json({ 
             status: 'success', 
             code: 200, 

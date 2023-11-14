@@ -114,10 +114,8 @@ describe("GET /api/api/v2/auth", ()=> {
             email: 'lol@mail.com',
             password: '1234'
         })
-    
         expect(res.statusCode).toBe(201);
         expect(res.body).toHaveProperty('status', 'Success!');
-        
         expect(res.body).toHaveProperty('message');
         expect(res.body).toHaveProperty('data');
         expect(res.body.data).toEqual(expect.any(Object));
@@ -129,12 +127,9 @@ describe("GET /api/api/v2/auth", ()=> {
             email: 'lol@mail.com',
             password: '1233'
         })
-    
         expect(res.statusCode).toBe(401);
         expect(res.body).toHaveProperty('status', 'Fail!');
-        
         expect(res.body).toHaveProperty('message');
-        
     });
 })
 describe("GET /api/api/v2/auth", ()=> {

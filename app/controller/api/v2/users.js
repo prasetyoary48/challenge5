@@ -1,7 +1,5 @@
 const { PrismaClient } = require('@prisma/client')
-
 const prisma = new PrismaClient
-
 
 module.exports = {
     async get(req, res){
@@ -10,7 +8,6 @@ module.exports = {
                 profile: true, 
                 bankAccount:true
             },
-            
         });
         res.status(200).json({ 
             status: 'success', 
@@ -41,6 +38,7 @@ module.exports = {
     },
 
     async create(req, res){
+        createdBy =req.user
         console.log(req.body)
         try {
             const user=await prisma.user.create({
@@ -57,7 +55,8 @@ module.exports = {
                             address: req.body.address,
                             identity_type:req.body.identity_type
                         }
-                    }
+                    },
+                    createdBy: createdBy.name
                 },
                 include:{
                     profile:true
@@ -75,7 +74,6 @@ module.exports = {
                 status: 'failed', 
                 code: 400, 
                 message: 'Gagal menambah data, terdapat data yang kosong atau salah',
-
             })
         }        
     },
@@ -87,7 +85,6 @@ module.exports = {
             },
             data: req.body
         });
-
         res.status(201).json({ 
             status: 'success', 
             code: 200, 
@@ -97,13 +94,11 @@ module.exports = {
     },
 
     async destroy(req, res){
-        
         const deletedData = await prisma.user.delete({
             where: {
                 id: +req.params.id,
             },
-        });
-    
+        }); 
         res.status(200).json({ 
             status: 'success', 
             code: 200, 

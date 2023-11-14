@@ -42,6 +42,16 @@ module.exports = {
         })
     },
 
+    async whoami(req, res){
+        return res.status(200).json({
+            status:"success!",
+            message:"OK",
+            data:{
+                user: req.user
+            }
+        })
+    },
+
     async register(req, res){
         const { email, name, password } = req.body;
         const user = await prisma.user.findFirst({
@@ -107,5 +117,17 @@ module.exports = {
         } catch (err) {
             return done(null, false, {message: err.message})
         }
+    },
+
+    oauth: async (req, res) =>{
+        const token = await JWTsign({
+            ...req.user,
+            password: null
+        })
+        return res.json({
+            status: "Success!",
+            message: "Berhasil Login!",
+            data: { token }
+        })
     }
 }

@@ -99,7 +99,7 @@ app.set("view engine", "ejs")
 app.set("views", path.join(__dirname, './app/view'))
 
 app.use('/docs',swaggerUI.serve,swaggerUI.setup(swaggerJSON))
-app.use('/api',routers)
+app.use('/',routers)
 
 // let server; 
 // beforeAll((done) => {
