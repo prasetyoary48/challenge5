@@ -7,7 +7,9 @@ const transactions = require('./transactions');
 const auth = require('./auth')
 const media = require('./media')
 
-
+router.get("/", (req, res)=> {
+    res.send("Selamat Datang")
+});
 
 router.use(users);
 router.use(auth);
