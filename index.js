@@ -1,86 +1,49 @@
-// const os = require('os')
-// const luasSegitiga = require('./segitiga')
+require('dotenv').config()
+const Sentry = require("@sentry/node")
+const { ProfilingIntegration } = require("@sentry/profiling-node");
 
-// import os from 'os';
-// import luasSegitiga from './segitiga';
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const { JWTsign } = require('./utils/jwt');
 
-// console.log("Free Memory", os.freemem())
-// console.log(luasSegitiga(2,2));
-
-
-// const { Client } = require('pg');
-// const client = new Client({
-//     host: 'localhost',
-//     port: 5432,
-//     database: 'blog',
-//     user: 'postgres',
-//     password: 'postgrepassword',
-// })
-
-// async function connectDB(){
-    
-//     await client.connect()
-    
-//     const res = await client.query(`
-//         SELECT * FROM users`,
-//     )
-    
-//     console.log(res.rows[1].name)
-//     await client.end()
-// }
-
-// connectDB();
-
-
-
-// app.get('/', (req, res)=>{
-//     res.send("Hello World")
-// })
-
-// app.get('/products', (req, res)=>{
-//     res.json([
-//         "Apple",
-//         "Redmi",
-//         "One Plus One"
-//     ])
-// })
-
-// app.get('/orders', (req,res)=>{
-//     res.json([
-//         {
-//             id:1,
-//             paid:false,
-//             user_id:1
-//         },
-//         {
-//             id:2,
-//             paid:false,
-//             user_id:1
-//         },
-//     ])
-// })
-
-// app.listen(3000, () => {
-//     console.log("Server Nyala")
-// })
-
-
-//=================================================
 const express = require('express')
+const ejs = require('ejs')
+const { sendMail, sendMailHTML } = require('./libs/mailer')
 const app = express()
 const port = 3000
 const path = require('path')
+const BASE_URL = process.env.BASE_URL
 
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
 
+const connectedUsers = new Set();
+
+io.on('connection', (socket) => {
+    connectedUsers.add(socket.id);
+    socket.on('register', () => {
+      io.to(socket.id).emit('notification', { type: 'welcome', message: 'Selamat datang' });
+    });
+  
+    socket.on('passwordChanged', () => {
+      io.emit('notification', { type: 'passwordChanged', message: 'Password berhasil diubah!' });
+    });
+});
 
 const flash = require('express-flash')
 const session = require('express-session')
 
-const routers =require('./router')
+const routers = require('./router')
 const swaggerJSON = require('./openapi.json')
 const swaggerUI = require('swagger-ui-express')
 
 const passport = require('./utils/passport')
+
+const morgan = require('morgan')
+
+
+
+app.use(morgan('combined'))
 
 
 app.use(express.json());
@@ -97,36 +60,90 @@ app.use(passport.session())
 
 app.set("view engine", "ejs")
 app.set("views", path.join(__dirname, './app/view'))
+app.use((req, res, next)=>{
+    req.io= io
+    return next()
+})
+
+
+Sentry.init({
+    dsn: 'https://3ada9b9fe7cbe6ae8f62eddd08b80f0d@o4506258322882560.ingest.sentry.io/4506258588172289',
+    integrations: [
+      new Sentry.Integrations.Http({ tracing: true }),
+      new Sentry.Integrations.Express({ app }),
+      new ProfilingIntegration(),
+    ],
+    tracesSampleRate: 1.0,
+    profilesSampleRate: 1.0,
+});
+  
+app.use(Sentry.Handlers.requestHandler());
+
+app.use(Sentry.Handlers.tracingHandler());
+
+
 
 app.use('/docs',swaggerUI.serve,swaggerUI.setup(swaggerJSON))
 app.use('/',routers)
 
-// let server; 
-// beforeAll((done) => {
-//     jest.setTimeout(5000);
-//     server = app.listen(3001, () => {
-//       done(); 
-//     });
-// });
+app.post('/resetpassword', async (req, res) => {
+    const user = await prisma.user.findFirst({
+        where:{
+            email: req.body.email
+        } 
+    })
+    if(!user){
+        return res.status(404).json({
+            status: "Fail!",
+            message:"Email tidak ditemukan!"
+        })
+    }
+    if(user){
+        const { email, password, name } = req.body;
+        // console.log(req.body)
+        // sendMail(email, `Halo ${name}`, 
+        //   `Terima kasih sudah mendaftar di aplikasi kami! Silahkan klik
+        //    link berikut untuk proses verifikasi email anda`
+        // )
+        const token = await JWTsign(user)
+        const url = req.protocol+"://"+req.headers.host
+        console.log(url)
+        ejs.renderFile(__dirname + "/app/view/templates/mail.ejs", 
+          { 
+            name: name,
+            reset:`${url}/changepassword?token=${token}`
+          }, 
+          function (err, data) {
+          if (err) {
+            console.log(err);
+          } else {
+            sendMailHTML(email, `Halo ${user.name}`, data)
+          }
+        })
+        res.status(200).json({
+          status: 'ok',
+          message: `Berhasil Register! silahkan cek email 
+          untuk verifikasi`
+        })
+    }
+})
 
-// afterAll((done) => {
-//     jest.setTimeout(5000);
-//     server.close(done);
-// });
+app.get("/debug-sentry", function mainHandler(req, res) {
+    throw new Error("My first Sentry error!");
+});
+
+app.use(Sentry.Handlers.errorHandler());
   
+
+app.use(function onError(err, req, res, next) {
+    // The error id is attached to `res.sentry` to be returned
+    // and optionally displayed to the user for support.
+    res.statusCode = 500;
+    res.end(res.sentry + "\n");
+});
 
 app.listen(port, () => 
     console.log(`Example app listening at http://localhost:${port}`))
 
-// if(!module.parent){
-//   app.listen(process.env.PORT, () =>
-//     console.log(`Example app listening on port ${process.env.PORT}!`),
-//   );
-// }
-
-// app.get('/', (req, res) => res.status(200).send('asd'))
-
-
 
 module.exports = app
-// app.get('',(req, res) => res.status(404).send('Gak Ketemu'))

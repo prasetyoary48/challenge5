@@ -13,6 +13,16 @@ router.post('/api/v2/auth/register', controller.auth.register)
 router.get('/api/v2/auth/whoami', auth, controller.auth.whoami)
 
 //view
+router.get('/resetpassword', (req, res)=>{
+    res.render('reset.ejs')
+})
+router.get('/changepassword', (req, res)=>{
+    console.log('ini token',req.query.token)
+    const token = req.query.token;
+    res.render('resetnewpassword.ejs',{token})
+})
+router.post('/changepassword', controller.auth.update)
+
 router.get('/register', (req, res)=>{
     res.render('register.ejs')
 })

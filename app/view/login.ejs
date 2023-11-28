@@ -1,5 +1,23 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <h2>Login</h2>
-<form action="/api/login" method="post">
+<script>
+    const socket = io();
+
+    socket.emit('register');
+
+    function changePassword() {
+      socket.emit('passwordChanged');
+    }
+
+    socket.on('notification', (data) => {
+      if (data.type === 'passwordChanged') {
+        alert(data.message);
+      } else if (data.type === 'welcome') {
+        alert(data.message);
+      }
+    });
+</script>
+<form action="/login" method="post">
     <% if(messages.error){ %>
         <span style="color:red">
             <% messages.error %>

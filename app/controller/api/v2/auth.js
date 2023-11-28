@@ -1,13 +1,16 @@
+require('dotenv').config()
 const { PrismaClient } = require('@prisma/client');
 const { encryptPassword, checkPassword } = require('../../../../utils/auth');
 const { use } = require('passport');
 const { JWTsign } = require('../../../../utils/jwt');
+const jwt2 = require('jsonwebtoken')
 
 
 const prisma = new PrismaClient();
 
 module.exports = {
     async login(req, res){
+        req.io.emit('notification','Berhasil Daftar')
         const{email, password} = req.body;
 
         const user = await prisma.user.findFirst({
@@ -34,6 +37,7 @@ module.exports = {
                 message: "Password Salah!"
             })
         }
+        console.log(token)
 
         return res.status(201).json({
             status: "Success!",
@@ -89,7 +93,7 @@ module.exports = {
         
         if(user){
             req.flash("error","Email sudah terdaftar!")
-            return res.redirect('/api/register')
+            return res.redirect('/register')
         }
 
         const createUser = await prisma.user.create({
@@ -101,7 +105,7 @@ module.exports = {
         })
 
         req.flash("success", "Berhasil Register")
-        return res.redirect('/api/login')
+        return res.redirect('/login')
     },
 
     authUser: async (email, password, done)=>{
@@ -128,6 +132,28 @@ module.exports = {
             status: "Success!",
             message: "Berhasil Login!",
             data: { token }
+        })
+    },
+    async update(req, res){
+        const decodedToken = jwt2.verify(req.body.token, process.env.JWT_SECRET_KEY); 
+      
+        const userEmail = decodedToken.email;
+      
+        console.log("Email yang sesuai dengan token:", userEmail);
+    
+        const updatedData = await prisma.user.update({
+            where: {
+                email: userEmail,
+            },
+            data: {
+                password:req.body.password
+            }
+        });
+        res.status(201).json({ 
+            status: 'success', 
+            code: 200, 
+            message: 'Data diupdate!',
+            data: updatedData
         })
     }
 }
