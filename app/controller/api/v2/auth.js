@@ -146,7 +146,7 @@ module.exports = {
                 email: userEmail,
             },
             data: {
-                password:req.body.password
+                password:await encryptPassword(req.body.password)
             }
         });
         res.status(201).json({ 
